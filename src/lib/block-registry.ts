@@ -2,12 +2,6 @@ import { HeroBlock, heroBlockConfig } from '@/components/blocks/HeroBlock';
 import { CTABlock, ctaBlockConfig } from '@/components/blocks/CTABlock';
 import { GalleryBlock, galleryBlockConfig } from '@/components/blocks/GalleryBlock';
 import { TextBlock, textBlockConfig } from '@/components/blocks/TextBlock';
-import { FeatureBlock, featureBlockConfig } from '@/components/blocks/FeatureBlock';
-import { TestimonialBlock, testimonialBlockConfig } from '@/components/blocks/TestimonialBlock';
-import { PricingBlock, pricingBlockConfig } from '@/components/blocks/PricingBlock';
-import { StatsBlock, statsBlockConfig } from '@/components/blocks/StatsBlock';
-import { ContactBlock, contactBlockConfig } from '@/components/blocks/ContactBlock';
-import { FooterBlock, footerBlockConfig } from '@/components/blocks/FooterBlock';
 
 export type BlockConfig = {
   type: string;
@@ -24,12 +18,6 @@ export const blockRegistry: Record<string, { component: BlockComponent; config: 
   cta: { component: CTABlock, config: ctaBlockConfig },
   gallery: { component: GalleryBlock, config: galleryBlockConfig },
   text: { component: TextBlock, config: textBlockConfig },
-  feature: { component: FeatureBlock, config: featureBlockConfig },
-  testimonial: { component: TestimonialBlock, config: testimonialBlockConfig },
-  pricing: { component: PricingBlock, config: pricingBlockConfig },
-  stats: { component: StatsBlock, config: statsBlockConfig },
-  contact: { component: ContactBlock, config: contactBlockConfig },
-  footer: { component: FooterBlock, config: footerBlockConfig },
 };
 
 export const getBlockComponent = (type: string): BlockComponent | null => {
