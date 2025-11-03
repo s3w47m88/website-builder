@@ -112,20 +112,29 @@ function renderComponent(
   onImageEdit: (key: string) => void
 ) {
   const { type, props } = component;
+  const theme = useEditorStore((state) => state.theme);
 
   // Hero Block
   if (type === 'hero') {
+    const gradientFrom = theme.colors.primary || '#3b82f6';
+    const gradientTo = theme.colors.secondary || '#8b5cf6';
+
     return (
       <div
-        className="relative flex items-center justify-center min-h-[500px] bg-gradient-to-br from-blue-500 to-purple-600 text-white overflow-hidden"
+        className="relative flex items-center justify-center min-h-[500px] text-white overflow-hidden"
         style={{
-          backgroundImage: props.backgroundImage ? `url(${props.backgroundImage})` : undefined,
+          backgroundImage: props.backgroundImage ? `url(${props.backgroundImage})` : `linear-gradient(to bottom right, ${gradientFrom}, ${gradientTo})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
         <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 animate-pulse" />
+        <div
+          className="absolute inset-0 animate-pulse"
+          style={{
+            background: `linear-gradient(to right, ${gradientFrom}33, ${gradientTo}33)`
+          }}
+        />
 
         <div className="relative z-10 text-center max-w-4xl px-6">
           <h1
@@ -148,11 +157,16 @@ function renderComponent(
           </p>
           <a
             href={props.ctaLink}
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-slide-up animation-delay-400"
+            className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-slide-up animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
             onBlur={(e) => editable && onTextEdit('ctaText', e.currentTarget.textContent || '')}
-            style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
+            style={{
+              outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none',
+              cursor: editable ? 'text' : 'default',
+              backgroundColor: theme.colors.background || '#ffffff',
+              color: theme.colors.primary || '#3b82f6'
+            }}
           >
             {props.ctaText}
           </a>
@@ -172,10 +186,12 @@ function renderComponent(
 
   // CTA Block
   if (type === 'cta') {
+    const bgColor = theme.colors.primary || props.backgroundColor || '#3b82f6';
+
     return (
       <div
         className="py-16 px-6 text-center relative overflow-hidden"
-        style={{ backgroundColor: props.backgroundColor }}
+        style={{ backgroundColor: bgColor }}
       >
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl animate-float" />
@@ -203,11 +219,16 @@ function renderComponent(
           </p>
           <a
             href={props.buttonLink}
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fade-in animation-delay-400"
+            className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fade-in animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
             onBlur={(e) => editable && onTextEdit('buttonText', e.currentTarget.textContent || '')}
-            style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
+            style={{
+              outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none',
+              cursor: editable ? 'text' : 'default',
+              backgroundColor: theme.colors.background || '#ffffff',
+              color: theme.colors.primary || '#3b82f6'
+            }}
           >
             {props.buttonText}
           </a>
@@ -219,14 +240,18 @@ function renderComponent(
   // Gallery Block
   if (type === 'gallery') {
     return (
-      <div className="py-16 px-6 bg-gray-50">
+      <div className="py-16 px-6" style={{ backgroundColor: theme.colors.background || '#f9fafb' }}>
         <div className="max-w-7xl mx-auto">
           <h2
             className="text-4xl font-bold text-center mb-12 animate-fade-in"
             contentEditable={editable}
             suppressContentEditableWarning
             onBlur={(e) => editable && onTextEdit('title', e.currentTarget.textContent || '')}
-            style={{ outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none', cursor: editable ? 'text' : 'default' }}
+            style={{
+              outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+              cursor: editable ? 'text' : 'default',
+              color: theme.colors.text || '#1f2937'
+            }}
           >
             {props.title}
           </h2>
@@ -281,7 +306,7 @@ function renderComponent(
     };
 
     return (
-      <div className="py-8 px-6">
+      <div className="py-8 px-6" style={{ backgroundColor: theme.colors.background || '#ffffff' }}>
         <div className="max-w-4xl mx-auto animate-fade-in">
           <div
             className={`prose prose-lg ${alignmentClasses[props.alignment as keyof typeof alignmentClasses] || 'text-left'} ${fontSizeClasses[props.fontSize as keyof typeof fontSizeClasses] || 'text-base'}`}
@@ -289,7 +314,11 @@ function renderComponent(
             suppressContentEditableWarning
             onBlur={(e) => editable && onTextEdit('content', e.currentTarget.innerHTML)}
             dangerouslySetInnerHTML={{ __html: props.content }}
-            style={{ outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none', cursor: editable ? 'text' : 'default' }}
+            style={{
+              outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+              cursor: editable ? 'text' : 'default',
+              color: theme.colors.text || '#1f2937'
+            }}
           />
         </div>
       </div>
