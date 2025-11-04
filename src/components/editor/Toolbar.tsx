@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useEditorStore } from '@/store/editor-store';
 import { getAllBlockConfigs, getCategories } from '@/lib/block-registry';
-import { Plus, Eye, EyeOff, Palette, Layout, Share2 } from 'lucide-react';
+import { Plus, Eye, EyeOff, Palette, Layout, Share2, Blocks, Briefcase } from 'lucide-react';
 import { ThemePanel } from './ThemePanel';
 import { TemplateSelector } from './TemplateSelector';
 import { ShareLink } from './ShareLink';
+import { BrandPanel } from './BrandPanel';
 import { loadPage } from '@/lib/page-service';
 import { PageTemplate } from '@/lib/templates';
 import { useSearchParams } from 'next/navigation';
@@ -48,6 +49,8 @@ export const Toolbar: React.FC = () => {
     });
   };
 
+  const [showBrandPanel, setShowBrandPanel] = useState(false);
+
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -56,50 +59,64 @@ export const Toolbar: React.FC = () => {
             type="text"
             value={pageName}
             onChange={(e) => setPageName(e.target.value)}
-            className="text-xl font-bold bg-transparent border-b-2 border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none px-2 py-1"
-            placeholder="Page name"
+            className="text-xl font-bold bg-transparent border-b-2 border-transparent hover:border-gray-300 focus:border-red-600 focus:outline-none px-2 py-1"
+            placeholder="Campaign Name"
           />
-
-          <button
-            onClick={() => setShowTemplateSelector(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Layout size={16} />
-            Templates
-          </button>
-
-          <button
-            onClick={() => setShowBlockLibrary(!showBlockLibrary)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus size={16} />
-            Add Component
-          </button>
-
-          <button
-            onClick={() => setEditing(!isEditing)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {isEditing ? <Eye size={16} /> : <EyeOff size={16} />}
-            {isEditing ? 'Preview' : 'Edit'}
-          </button>
         </div>
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setShowBrandPanel(true)}
+            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title="Brand"
+          >
+            <Briefcase size={16} />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Brand</span>
+          </button>
+
+          <button
+            onClick={() => setShowTemplateSelector(true)}
+            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title="Templates"
+          >
+            <Layout size={16} />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Templates</span>
+          </button>
+
+          <button
+            onClick={() => setShowBlockLibrary(!showBlockLibrary)}
+            className="group flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+            title="Add Component"
+          >
+            <Blocks size={16} />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Add Component</span>
+          </button>
+
+          <button
+            onClick={() => setEditing(!isEditing)}
+            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title={isEditing ? 'Preview' : 'Edit'}
+          >
+            {isEditing ? <Eye size={16} /> : <EyeOff size={16} />}
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">{isEditing ? 'Preview' : 'Edit'}</span>
+          </button>
+
+          <button
             onClick={() => setShowThemePanel(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title="Theme"
           >
             <Palette size={16} />
-            Theme
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Theme</span>
           </button>
 
           <button
             onClick={() => setShowShareLink(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="group flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+            title="Share"
           >
             <Share2 size={16} />
-            Share
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Share</span>
           </button>
 
           {isSaving ? (
@@ -120,6 +137,9 @@ export const Toolbar: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Brand Panel */}
+      <BrandPanel isOpen={showBrandPanel} onClose={() => setShowBrandPanel(false)} />
 
       {/* Theme Panel */}
       <ThemePanel isOpen={showThemePanel} onClose={() => setShowThemePanel(false)} />

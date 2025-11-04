@@ -10,20 +10,20 @@ export type PageTemplate = {
   theme: ThemeConfig;
 };
 
-// Template 1: Modern SaaS Landing Page (Fully Populated)
+// Template 1: Conservative Campaign Landing Page (Fully Populated)
 const modernSaaSTemplate: PageTemplate = {
   id: 'modern-saas',
-  name: 'Modern SaaS',
-  description: 'Clean, professional landing page for SaaS products',
-  category: 'Business',
-  thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400',
+  name: 'Conservative Campaign',
+  description: 'Professional campaign page for conservative candidates',
+  category: 'Campaign',
+  thumbnail: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=400',
   theme: {
     colors: {
-      primary: '#3b82f6',
-      secondary: '#8b5cf6',
+      primary: '#DC2626',
+      secondary: '#1D4ED8',
       background: '#ffffff',
       text: '#1f2937',
-      accent: '#f59e0b',
+      accent: '#F59E0B',
     },
     fonts: { heading: 'Inter', body: 'Inter' },
     mode: 'light',
@@ -34,9 +34,9 @@ const modernSaaSTemplate: PageTemplate = {
       type: 'hero',
       order: 0,
       props: {
-        title: 'Build Better Products Faster',
-        subtitle: 'The all-in-one platform for modern teams to collaborate, ship, and scale',
-        ctaText: 'Start Free Trial',
+        title: 'Fighting for American Values',
+        subtitle: 'A proven conservative leader committed to freedom, security, and prosperity for all Americans',
+        ctaText: 'Join Our Movement',
         ctaLink: '#',
       },
     },
@@ -45,7 +45,7 @@ const modernSaaSTemplate: PageTemplate = {
       type: 'text',
       order: 1,
       props: {
-        content: '<h2 class="text-3xl font-bold mb-4">Trusted by 10,000+ companies worldwide</h2><p>From startups to enterprises, teams rely on our platform every day.</p>',
+        content: '<h2 class="text-3xl font-bold mb-4">Trusted by thousands of conservative Americans</h2><p>From Main Street to Capitol Hill, we are building a movement for common-sense conservative values.</p>',
         alignment: 'center',
         fontSize: 'lg',
       },
@@ -55,11 +55,11 @@ const modernSaaSTemplate: PageTemplate = {
       type: 'gallery',
       order: 2,
       props: {
-        title: 'Powerful Features',
+        title: 'Our Conservative Priorities',
         images: [
-          { url: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400', alt: 'Feature 1' },
-          { url: 'https://images.unsplash.com/photo-1551817958-d9d86fb29431?w=400', alt: 'Feature 2' },
-          { url: 'https://images.unsplash.com/photo-1551817958-11e0f7bbef87?w=400', alt: 'Feature 3' },
+          { url: 'https://images.unsplash.com/photo-1509715513011-e394f0cb20c4?w=400', alt: 'American Flag' },
+          { url: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400', alt: 'Community' },
+          { url: 'https://images.unsplash.com/photo-1551817958-11e0f7bbef87?w=400', alt: 'Growth' },
         ],
         columns: 3,
       },
@@ -69,7 +69,7 @@ const modernSaaSTemplate: PageTemplate = {
       type: 'text',
       order: 3,
       props: {
-        content: '<h2 class="text-4xl font-bold mb-6">Everything you need to succeed</h2><p class="text-xl">Powerful tools, seamless integrations, and 24/7 support to help your team thrive.</p>',
+        content: '<h2 class="text-4xl font-bold mb-6">A Platform Built on American Values</h2><p class="text-xl">Lower taxes, stronger borders, individual liberty, and limited government - the principles that made America great.</p>',
         alignment: 'center',
         fontSize: 'xl',
       },
@@ -79,30 +79,30 @@ const modernSaaSTemplate: PageTemplate = {
       type: 'cta',
       order: 4,
       props: {
-        heading: 'Ready to get started?',
-        description: 'Join thousands of teams already building better products',
-        buttonText: 'Start Free Trial',
+        heading: 'Ready to Make a Difference?',
+        description: 'Join thousands of Americans standing up for conservative values',
+        buttonText: 'Get Involved',
         buttonLink: '#',
-        backgroundColor: '#3b82f6',
+        backgroundColor: '#DC2626',
       },
     },
   ],
 };
 
-// Template 2: Creative Portfolio (Fully Populated)
+// Template 2: Grassroots Campaign (Fully Populated)
 const creativePortfolioTemplate: PageTemplate = {
   id: 'creative-portfolio',
-  name: 'Creative Portfolio',
-  description: 'Showcase your work with style',
-  category: 'Portfolio',
-  thumbnail: 'https://images.unsplash.com/photo-1542744094-24638eff58bb?w=400',
+  name: 'Grassroots Campaign',
+  description: 'Build momentum from the ground up',
+  category: 'Campaign',
+  thumbnail: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400',
   theme: {
     colors: {
-      primary: '#ec4899',
-      secondary: '#8b5cf6',
+      primary: '#DC2626',
+      secondary: '#1D4ED8',
       background: '#ffffff',
       text: '#1f2937',
-      accent: '#f59e0b',
+      accent: '#F59E0B',
     },
     fonts: { heading: 'Inter', body: 'Inter' },
     mode: 'light',
@@ -113,9 +113,9 @@ const creativePortfolioTemplate: PageTemplate = {
       type: 'hero',
       order: 0,
       props: {
-        title: 'Creative Designer & Developer',
-        subtitle: 'Crafting beautiful digital experiences that inspire and engage',
-        ctaText: 'View Work',
+        title: 'A Voice for the People',
+        subtitle: 'Standing strong for conservative principles and American values in our community',
+        ctaText: 'Volunteer Now',
         ctaLink: '#',
       },
     },
@@ -124,7 +124,7 @@ const creativePortfolioTemplate: PageTemplate = {
       type: 'text',
       order: 1,
       props: {
-        content: '<h2 class="text-3xl font-bold mb-4">About Me</h2><p class="text-lg">With 10+ years of experience in design and development, I create stunning digital products for brands worldwide.</p>',
+        content: '<h2 class="text-3xl font-bold mb-4">About Our Candidate</h2><p class="text-lg">A lifelong conservative with deep roots in our community, fighting for lower taxes, limited government, and individual freedom.</p>',
         alignment: 'center',
         fontSize: 'lg',
       },
@@ -134,14 +134,14 @@ const creativePortfolioTemplate: PageTemplate = {
       type: 'gallery',
       order: 2,
       props: {
-        title: 'Featured Projects',
+        title: 'On the Campaign Trail',
         images: [
-          { url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400', alt: 'Project 1' },
-          { url: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=400', alt: 'Project 2' },
-          { url: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=400', alt: 'Project 3' },
-          { url: 'https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=400', alt: 'Project 4' },
-          { url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400', alt: 'Project 5' },
-          { url: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=400', alt: 'Project 6' },
+          { url: 'https://images.unsplash.com/photo-1509715513011-e394f0cb20c4?w=400', alt: 'Rally' },
+          { url: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400', alt: 'Community' },
+          { url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=400', alt: 'Event' },
+          { url: 'https://images.unsplash.com/photo-1464652149449-f3b8538144aa?w=400', alt: 'Town Hall' },
+          { url: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400', alt: 'Meeting' },
+          { url: 'https://images.unsplash.com/photo-1523287562758-66c7fc58967f?w=400', alt: 'Speech' },
         ],
         columns: 3,
       },
@@ -151,7 +151,7 @@ const creativePortfolioTemplate: PageTemplate = {
       type: 'text',
       order: 3,
       props: {
-        content: '<h2 class="text-3xl font-bold mb-4">Skills & Expertise</h2><p class="text-lg">UI/UX Design • Web Development • Brand Identity • Motion Graphics</p>',
+        content: '<h2 class="text-3xl font-bold mb-4">Our Conservative Agenda</h2><p class="text-lg">Second Amendment Rights • Lower Taxes • Border Security • School Choice • Law & Order</p>',
         alignment: 'center',
         fontSize: 'lg',
       },
@@ -161,11 +161,11 @@ const creativePortfolioTemplate: PageTemplate = {
       type: 'cta',
       order: 4,
       props: {
-        heading: "Let's work together",
-        description: 'Have a project in mind? Get in touch and let\'s create something amazing',
-        buttonText: 'Contact Me',
+        heading: "Join the Fight for Freedom",
+        description: 'Every patriot counts. Volunteer, donate, or spread the word to help us win',
+        buttonText: 'Take Action',
         buttonLink: '#',
-        backgroundColor: '#ec4899',
+        backgroundColor: '#DC2626',
       },
     },
   ],
