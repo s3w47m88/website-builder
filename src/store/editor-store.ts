@@ -42,12 +42,20 @@ const defaultTheme: ThemeConfig = {
   mode: 'light',
 };
 
+// Initialize currentPageId from localStorage if available
+const getInitialPageId = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('currentPageId');
+  }
+  return null;
+};
+
 export const useEditorStore = create<EditorState>((set, get) => ({
   components: [],
   selectedComponentId: null,
   theme: defaultTheme,
   isEditing: false,
-  currentPageId: null,
+  currentPageId: getInitialPageId(),
   pageName: 'Untitled Page',
   autoSaveTimeout: null,
   isSaving: false,
@@ -122,7 +130,11 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
   setEditing: (isEditing) => set({ isEditing }),
 
-  resetEditor: () =>
+  resetEditor: () => {
+    // Clear persisted page ID
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentPageId');
+    }
     set({
       components: [],
       selectedComponentId: null,
@@ -130,16 +142,22 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       isEditing: false,
       currentPageId: null,
       pageName: 'Untitled Page',
-    }),
+    });
+  },
 
-  loadPage: (page) =>
+  loadPage: (page) => {
+    // Persist currentPageId to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currentPageId', page.id);
+    }
     set({
       components: page.components,
       theme: page.theme,
       currentPageId: page.id,
       pageName: page.name,
       selectedComponentId: null,
-    }),
+    });
+  },
 
   setPageName: (name) => {
     set({ pageName: name });

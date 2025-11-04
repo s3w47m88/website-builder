@@ -7,6 +7,7 @@ import { ComponentData } from '@/lib/supabase';
 import { useEditorStore } from '@/store/editor-store';
 import { GripVertical, Trash2, Image as ImageIcon } from 'lucide-react';
 import { ImageUploader } from './ImageUploader';
+import { getBlockComponent } from '@/lib/block-registry';
 
 type EditableBlockProps = {
   component: ComponentData;
@@ -325,5 +326,11 @@ function renderComponent(
     );
   }
 
-  return <div>Unknown component type: {type}</div>;
+  // Use block registry for other component types
+  const BlockComponent = getBlockComponent(type);
+  if (BlockComponent) {
+    return <BlockComponent {...props} />;
+  }
+
+  return <div className="p-8 bg-red-50 border-2 border-red-300 rounded-lg text-red-700">Unknown component type: {type}</div>;
 }

@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { pageTemplates, getAllCategories, PageTemplate } from '@/lib/templates';
-import { X, Search } from 'lucide-react';
+import { X, Search, Eye } from 'lucide-react';
+import { useEditorStore } from '@/store/editor-store';
+import { Canvas } from './Canvas';
 
 type TemplateSelectorProps = {
   isOpen: boolean;
@@ -17,6 +19,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [previewTemplate, setPreviewTemplate] = useState<PageTemplate | null>(null);
 
   if (!isOpen) return null;
 
@@ -92,17 +95,16 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template) => (
-                <button
+                <div
                   key={template.id}
-                  onClick={() => handleSelectTemplate(template)}
-                  className="group relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 hover:shadow-lg transition-all text-left"
+                  className="group relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 hover:shadow-lg transition-all"
                 >
                   {/* Thumbnail */}
                   <div className="aspect-video bg-gray-100 overflow-hidden">
                     <img
                       src={template.thumbnail}
                       alt={template.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
@@ -114,10 +116,10 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                         {template.category}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{template.description}</p>
+                    <p className="text-sm text-gray-600 mb-3">{template.description}</p>
 
                     {/* Theme Colors Preview */}
-                    <div className="flex gap-1 mt-3">
+                    <div className="flex gap-1 mb-3">
                       {Object.values(template.theme.colors).slice(0, 5).map((color, index) => (
                         <div
                           key={index}
@@ -127,20 +129,101 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                         />
                       ))}
                     </div>
-                  </div>
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-blue-600 bg-opacity-0 group-hover:bg-opacity-10 transition-all flex items-center justify-center">
-                    <span className="text-white font-semibold opacity-0 group-hover:opacity-100 bg-blue-600 px-4 py-2 rounded-lg">
-                      Use Template
-                    </span>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setPreviewTemplate(template)}
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                      >
+                        <Eye size={16} />
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => handleSelectTemplate(template)}
+                        className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      >
+                        Use
+                      </button>
+                    </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {previewTemplate && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">{previewTemplate.name}</h2>
+                <p className="text-sm text-gray-600">{previewTemplate.description}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    handleSelectTemplate(previewTemplate);
+                    setPreviewTemplate(null);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Use This Template
+                </button>
+                <button
+                  onClick={() => setPreviewTemplate(null)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <TemplatePreview template={previewTemplate} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Template Preview Component
+const TemplatePreview: React.FC<{ template: PageTemplate }> = ({ template }) => {
+  const { loadPage: loadPageToStore } = useEditorStore();
+
+  // Temporarily load the template for preview
+  React.useEffect(() => {
+    const currentState = useEditorStore.getState();
+    const restoreState = {
+      components: currentState.components,
+      theme: currentState.theme,
+      pageName: currentState.pageName,
+    };
+
+    loadPageToStore({
+      id: 'preview',
+      name: template.name,
+      components: template.components,
+      theme: template.theme,
+    });
+
+    return () => {
+      loadPageToStore({
+        id: 'preview',
+        name: restoreState.pageName,
+        components: restoreState.components,
+        theme: restoreState.theme,
+      });
+    };
+  }, [template, loadPageToStore]);
+
+  return (
+    <div className="bg-gray-100 min-h-full">
+      <Canvas />
     </div>
   );
 };

@@ -3,21 +3,77 @@
 import React, { useState, useEffect } from 'react';
 import { useEditorStore } from '@/store/editor-store';
 import { getAllBlockConfigs, getCategories } from '@/lib/block-registry';
-import { Plus, Eye, EyeOff, Palette, Layout, Share2, Blocks, Briefcase } from 'lucide-react';
+import { Plus, Eye, EyeOff, Palette, Layout, Share2, Blocks, Briefcase, FolderOpen, Building2 } from 'lucide-react';
 import { ThemePanel } from './ThemePanel';
 import { TemplateSelector } from './TemplateSelector';
 import { ShareLink } from './ShareLink';
 import { BrandPanel } from './BrandPanel';
+import { SitesPanel } from './SitesPanel';
+import { OrganizationSwitcher } from './OrganizationSwitcher';
 import { loadPage } from '@/lib/page-service';
 import { PageTemplate } from '@/lib/templates';
 import { useSearchParams } from 'next/navigation';
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 
-export const Toolbar: React.FC = () => {
+type ToolbarProps = {
+  onCreateNewSite?: () => void;
+};
+
+type DraggableBlockButtonProps = {
+  blockType: string;
+  blockName: string;
+  category: string;
+  defaultProps: Record<string, any>;
+  onClick: () => void;
+};
+
+const DraggableBlockButton: React.FC<DraggableBlockButtonProps> = ({
+  blockType,
+  blockName,
+  category,
+  defaultProps,
+  onClick
+}) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `new-block-${blockType}`,
+    data: {
+      type: 'NEW_BLOCK',
+      blockType,
+      defaultProps
+    }
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? 'grabbing' : 'grab'
+  };
+
+  return (
+    <button
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      onClick={onClick}
+      className="w-full p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group hover:shadow-md"
+    >
+      <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+        {blockName}
+      </div>
+      <div className="text-xs text-gray-500 mt-1 capitalize">{category}</div>
+    </button>
+  );
+};
+
+export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
   const { addComponent, isEditing, setEditing, components, theme, pageName, currentPageId, setPageName, setCurrentPageId, loadPage: loadPageToStore, resetEditor, isSaving } = useEditorStore();
   const [showBlockLibrary, setShowBlockLibrary] = useState(false);
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showShareLink, setShowShareLink] = useState(false);
+  const [showSitesPanel, setShowSitesPanel] = useState(false);
   const searchParams = useSearchParams();
 
   const categories = getCategories();
@@ -42,14 +98,30 @@ export const Toolbar: React.FC = () => {
 
   const handleSelectTemplate = (template: PageTemplate) => {
     loadPageToStore({
-      id: crypto.randomUUID(),
-      name: template.name,
+      id: currentPageId || crypto.randomUUID(),
+      name: pageName || template.name,
       components: template.components,
       theme: template.theme,
     });
+    setShowTemplateSelector(false);
+  };
+
+  const handleCreateNewSite = () => {
+    resetEditor();
+    setShowSitesPanel(false);
+    if (onCreateNewSite) {
+      onCreateNewSite();
+    }
   };
 
   const [showBrandPanel, setShowBrandPanel] = useState(false);
+  const [showOrgSwitcher, setShowOrgSwitcher] = useState(false);
+
+  const handleOrganizationChange = (organizationId: string) => {
+    // When organization changes, reload sites for that organization
+    // This will be handled in the SitesPanel component
+    console.log('Organization changed to:', organizationId);
+  };
 
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -66,12 +138,31 @@ export const Toolbar: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setShowOrgSwitcher(true)}
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title="Organization"
+          >
+            <Building2 size={16} className="flex-shrink-0" />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Organization</span>
+          </button>
+
+          <button
+            onClick={() => setShowSitesPanel(true)}
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            title="Sites"
+            data-sites-button
+          >
+            <FolderOpen size={16} className="flex-shrink-0" />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Sites</span>
+          </button>
+
+          <button
             onClick={() => setShowBrandPanel(true)}
             className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title="Brand"
           >
             <Briefcase size={16} className="flex-shrink-0" />
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Brand</span>
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Brand</span>
           </button>
 
           <button
@@ -80,25 +171,16 @@ export const Toolbar: React.FC = () => {
             title="Templates"
           >
             <Layout size={16} className="flex-shrink-0" />
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Templates</span>
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Templates</span>
           </button>
 
           <button
             onClick={() => setShowBlockLibrary(!showBlockLibrary)}
-            className="group flex items-center overflow-hidden px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title="Add Component"
           >
             <Blocks size={16} className="flex-shrink-0" />
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Add Component</span>
-          </button>
-
-          <button
-            onClick={() => setEditing(!isEditing)}
-            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
-            title={isEditing ? 'Preview' : 'Edit'}
-          >
-            {isEditing ? <Eye size={16} className="flex-shrink-0" /> : <EyeOff size={16} className="flex-shrink-0" />}
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">{isEditing ? 'Preview' : 'Edit'}</span>
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Add Component</span>
           </button>
 
           <button
@@ -107,16 +189,7 @@ export const Toolbar: React.FC = () => {
             title="Theme"
           >
             <Palette size={16} className="flex-shrink-0" />
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Theme</span>
-          </button>
-
-          <button
-            onClick={() => setShowShareLink(true)}
-            className="group flex items-center overflow-hidden px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
-            title="Share"
-          >
-            <Share2 size={16} className="flex-shrink-0" />
-            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Share</span>
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Theme</span>
           </button>
 
           {isSaving ? (
@@ -138,6 +211,20 @@ export const Toolbar: React.FC = () => {
         </div>
       </div>
 
+      {/* Organization Switcher */}
+      <OrganizationSwitcher
+        isOpen={showOrgSwitcher}
+        onClose={() => setShowOrgSwitcher(false)}
+        onOrganizationChange={handleOrganizationChange}
+      />
+
+      {/* Sites Panel */}
+      <SitesPanel
+        isOpen={showSitesPanel}
+        onClose={() => setShowSitesPanel(false)}
+        onCreateNew={handleCreateNewSite}
+      />
+
       {/* Brand Panel */}
       <BrandPanel isOpen={showBrandPanel} onClose={() => setShowBrandPanel(false)} />
 
@@ -154,43 +241,55 @@ export const Toolbar: React.FC = () => {
       {/* Share Link */}
       <ShareLink isOpen={showShareLink} onClose={() => setShowShareLink(false)} />
 
-      {/* Block Library Modal */}
-      {showBlockLibrary && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold">Add Component</h2>
-              <button
-                onClick={() => setShowBlockLibrary(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
+      {/* Block Library Slide-out Panel */}
+      <div
+        className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
+          showBlockLibrary ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-gray-50">
+            <h2 className="text-xl font-bold">Add Component</h2>
+            <button
+              onClick={() => setShowBlockLibrary(false)}
+              className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              ✕
+            </button>
+          </div>
 
-            <div className="p-6">
-              {categories.map((category) => (
-                <div key={category} className="mb-8">
-                  <h3 className="text-lg font-semibold capitalize mb-4">{category}</h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    {blocks
-                      .filter((block) => block.category === category)
-                      .map((block) => (
-                        <button
-                          key={block.type}
-                          onClick={() => handleAddBlock(block.type, block.defaultProps)}
-                          className="p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-left"
-                        >
-                          <div className="font-semibold mb-1">{block.name}</div>
-                          <div className="text-sm text-gray-500 capitalize">{block.category}</div>
-                        </button>
-                      ))}
-                  </div>
+          {/* Component List */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {categories.map((category) => (
+              <div key={category} className="mb-6">
+                <h3 className="text-sm font-semibold uppercase text-gray-500 mb-3 px-2">{category}</h3>
+                <div className="space-y-2">
+                  {blocks
+                    .filter((block) => block.category === category)
+                    .map((block) => (
+                      <DraggableBlockButton
+                        key={block.type}
+                        blockType={block.type}
+                        blockName={block.name}
+                        category={block.category}
+                        defaultProps={block.defaultProps}
+                        onClick={() => handleAddBlock(block.type, block.defaultProps)}
+                      />
+                    ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
+
+      {/* Backdrop */}
+      {showBlockLibrary && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 transition-opacity"
+          onClick={() => setShowBlockLibrary(false)}
+        />
       )}
     </div>
   );

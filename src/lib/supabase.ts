@@ -10,6 +10,7 @@ export type PageConfig = {
   name: string;
   components: ComponentData[];
   theme: ThemeConfig;
+  organization_id?: string;
   created_at?: string;
   updated_at?: string;
 };
