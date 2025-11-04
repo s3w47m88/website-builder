@@ -18,6 +18,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 
@@ -26,17 +28,27 @@ function EditorContent() {
   const [showSelectSite, setShowSelectSite] = useState(false);
   const [showShareLink, setShowShareLink] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const { currentPageId, components, addComponent, reorderComponents } = useEditorStore();
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px of movement before activating drag
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
 
     // Check if this is a new block being dragged from the toolbar
     if (active.data.current?.type === 'NEW_BLOCK') {
@@ -55,6 +67,10 @@ function EditorContent() {
       const newOrder = arrayMove(components, oldIndex, newIndex);
       reorderComponents(newOrder);
     }
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
   };
 
   useEffect(() => {
@@ -126,7 +142,13 @@ function EditorContent() {
 
   if (showOnboarding) {
     return (
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
         <div className="h-screen flex flex-col">
           <Toolbar onCreateNewSite={handleCreateNewSite} />
           <div className="flex-1 overflow-auto">
@@ -134,13 +156,26 @@ function EditorContent() {
           </div>
           <EnvironmentIndicator />
         </div>
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+              Dragging component...
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
     );
   }
 
   if (showSelectSite) {
     return (
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
         <div className="h-screen flex flex-col">
           <Toolbar onCreateNewSite={handleCreateNewSite} />
           <div className="flex-1 flex items-center justify-center bg-gray-50">
@@ -170,12 +205,25 @@ function EditorContent() {
           </div>
           <EnvironmentIndicator />
         </div>
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+              Dragging component...
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
     );
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
       <div className="h-screen flex flex-col">
         <Toolbar onCreateNewSite={handleCreateNewSite} />
         <div className="flex-1 overflow-auto">
@@ -185,6 +233,13 @@ function EditorContent() {
         <ShareLink isOpen={showShareLink} onClose={() => setShowShareLink(false)} />
         <EnvironmentIndicator />
       </div>
+      <DragOverlay>
+        {activeId ? (
+          <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            Dragging component...
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

@@ -312,8 +312,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
       {/* Backdrop */}
       {showBlockLibrary && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 transition-opacity"
+          className="fixed inset-0 bg-black/30 z-40 transition-opacity pointer-events-auto"
           onClick={() => setShowBlockLibrary(false)}
+          style={{ pointerEvents: 'auto' }}
         />
       )}
     </div>
