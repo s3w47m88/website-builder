@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEditorStore } from '@/store/editor-store';
 import { getAllBlockConfigs, getCategories } from '@/lib/block-registry';
-import { Plus, Eye, EyeOff, Palette, Layout, Share2, Blocks, Briefcase, FolderOpen, Building2 } from 'lucide-react';
+import { Plus, Eye, EyeOff, Palette, Layout, Share2, Blocks, Briefcase, FolderOpen, Building2, LogOut } from 'lucide-react';
 import { ThemePanel } from './ThemePanel';
 import { TemplateSelector } from './TemplateSelector';
 import { ShareLink } from './ShareLink';
@@ -123,6 +123,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
     console.log('Organization changed to:', organizationId);
   };
 
+  const handleLogout = async () => {
+    const { signOut } = await import('@/lib/auth-service');
+    const result = await signOut();
+    if (result.success) {
+      // Clear any local storage
+      localStorage.removeItem('currentPageId');
+      localStorage.removeItem('selectedOrganizationId');
+      // Redirect to login
+      window.location.href = '/auth';
+    } else {
+      alert('Failed to logout: ' + result.error);
+    }
+  };
+
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -208,6 +222,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
               Saved
             </div>
           )}
+
+          <div className="h-6 w-px bg-gray-300 mx-2"></div>
+
+          <button
+            onClick={handleLogout}
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all"
+            title="Logout"
+          >
+            <LogOut size={16} className="flex-shrink-0 text-gray-600 group-hover:text-red-600" />
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap text-gray-600 group-hover:text-red-600">Logout</span>
+          </button>
         </div>
       </div>
 
