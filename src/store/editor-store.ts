@@ -54,7 +54,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   components: [],
   selectedComponentId: null,
   theme: defaultTheme,
-  isEditing: false,
+  isEditing: true,
   currentPageId: getInitialPageId(),
   pageName: 'Untitled Page',
   autoSaveTimeout: null,

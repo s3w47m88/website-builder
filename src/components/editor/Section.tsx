@@ -22,7 +22,7 @@ type SectionProps = {
   style: SectionStyle;
   children?: React.ReactNode;
   onAddSection: (position: 'above' | 'below') => void;
-  onAddComponent: (slotIndex: number) => void;
+  onAddComponent: (slotIndex: number, componentType: string, defaultProps: any) => void;
   onDelete: () => void;
   onUpdateLayout: (layout: SectionLayout) => void;
   onUpdateStyle: (style: SectionStyle) => void;
@@ -236,7 +236,7 @@ export const Section: React.FC<SectionProps> = ({
             setSelectedSlot(null);
           }}
           onSelectComponent={(componentType, defaultProps) => {
-            onAddComponent(selectedSlot);
+            onAddComponent(selectedSlot, componentType, defaultProps);
             setShowComponentPicker(false);
             setSelectedSlot(null);
           }}
