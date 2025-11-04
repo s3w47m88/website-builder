@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import { Toolbar } from '@/components/editor/Toolbar';
+import { Toolbar, BlockLibraryPanel } from '@/components/editor/Toolbar';
 import { Canvas } from '@/components/editor/Canvas';
 import { OnboardingWizard } from '@/components/editor/OnboardingWizard';
 import { FloatingEditButton } from '@/components/editor/FloatingEditButton';
@@ -27,6 +27,7 @@ function EditorContent() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSelectSite, setShowSelectSite] = useState(false);
   const [showShareLink, setShowShareLink] = useState(false);
+  const [showBlockLibrary, setShowBlockLibrary] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
   const { currentPageId, components, addComponent, reorderComponents } = useEditorStore();
@@ -154,9 +155,19 @@ function EditorContent() {
         onDragCancel={handleDragCancel}
       >
         <div className="h-screen flex flex-col">
-          <Toolbar onCreateNewSite={handleCreateNewSite} />
-          <div className="flex-1 overflow-auto">
-            <OnboardingWizard isOpen={showOnboarding} onComplete={handleOnboardingComplete} />
+          <Toolbar
+            onCreateNewSite={handleCreateNewSite}
+            showBlockLibrary={showBlockLibrary}
+            onToggleBlockLibrary={() => setShowBlockLibrary(!showBlockLibrary)}
+          />
+          <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 overflow-auto">
+              <OnboardingWizard isOpen={showOnboarding} onComplete={handleOnboardingComplete} />
+            </div>
+            <BlockLibraryPanel
+              isOpen={showBlockLibrary}
+              onClose={() => setShowBlockLibrary(false)}
+            />
           </div>
           <EnvironmentIndicator />
         </div>
@@ -181,31 +192,41 @@ function EditorContent() {
         onDragCancel={handleDragCancel}
       >
         <div className="h-screen flex flex-col">
-          <Toolbar onCreateNewSite={handleCreateNewSite} />
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
-            <div className="text-center max-w-md px-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome Back!</h2>
-              <p className="text-gray-600 mb-8">
-                You have existing sites. Please select one from "My Sites" to continue editing, or create a new one.
-              </p>
-              <div className="flex flex-col gap-4">
-                <button
-                  onClick={() => {
-                    const toolbar = document.querySelector('[data-sites-button]') as HTMLButtonElement;
-                    toolbar?.click();
-                  }}
-                  className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
-                >
-                  Open My Sites
-                </button>
-                <button
-                  onClick={handleCreateNewSite}
-                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-red-600 hover:text-red-600 transition-colors font-semibold"
-                >
-                  Create New Site
-                </button>
+          <Toolbar
+            onCreateNewSite={handleCreateNewSite}
+            showBlockLibrary={showBlockLibrary}
+            onToggleBlockLibrary={() => setShowBlockLibrary(!showBlockLibrary)}
+          />
+          <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex items-center justify-center bg-gray-50 overflow-auto">
+              <div className="text-center max-w-md px-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome Back!</h2>
+                <p className="text-gray-600 mb-8">
+                  You have existing sites. Please select one from "My Sites" to continue editing, or create a new one.
+                </p>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={() => {
+                      const toolbar = document.querySelector('[data-sites-button]') as HTMLButtonElement;
+                      toolbar?.click();
+                    }}
+                    className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+                  >
+                    Open My Sites
+                  </button>
+                  <button
+                    onClick={handleCreateNewSite}
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-red-600 hover:text-red-600 transition-colors font-semibold"
+                  >
+                    Create New Site
+                  </button>
+                </div>
               </div>
             </div>
+            <BlockLibraryPanel
+              isOpen={showBlockLibrary}
+              onClose={() => setShowBlockLibrary(false)}
+            />
           </div>
           <EnvironmentIndicator />
         </div>
@@ -229,9 +250,19 @@ function EditorContent() {
       onDragCancel={handleDragCancel}
     >
       <div className="h-screen flex flex-col">
-        <Toolbar onCreateNewSite={handleCreateNewSite} />
-        <div className="flex-1 overflow-auto">
-          <Canvas />
+        <Toolbar
+          onCreateNewSite={handleCreateNewSite}
+          showBlockLibrary={showBlockLibrary}
+          onToggleBlockLibrary={() => setShowBlockLibrary(!showBlockLibrary)}
+        />
+        <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 overflow-auto">
+            <Canvas />
+          </div>
+          <BlockLibraryPanel
+            isOpen={showBlockLibrary}
+            onClose={() => setShowBlockLibrary(false)}
+          />
         </div>
         <FloatingEditButton onShareClick={() => setShowShareLink(true)} />
         <ShareLink isOpen={showShareLink} onClose={() => setShowShareLink(false)} />

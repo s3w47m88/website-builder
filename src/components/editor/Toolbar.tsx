@@ -18,6 +18,8 @@ import { CSS } from '@dnd-kit/utilities';
 
 type ToolbarProps = {
   onCreateNewSite?: () => void;
+  showBlockLibrary?: boolean;
+  onToggleBlockLibrary?: () => void;
 };
 
 type DraggableBlockButtonProps = {
@@ -67,9 +69,8 @@ const DraggableBlockButton: React.FC<DraggableBlockButtonProps> = ({
   );
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite, showBlockLibrary = false, onToggleBlockLibrary }) => {
   const { addComponent, isEditing, setEditing, components, theme, pageName, currentPageId, setPageName, setCurrentPageId, loadPage: loadPageToStore, resetEditor, isSaving } = useEditorStore();
-  const [showBlockLibrary, setShowBlockLibrary] = useState(false);
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showShareLink, setShowShareLink] = useState(false);
@@ -93,7 +94,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
 
   const handleAddBlock = (type: string, defaultProps: Record<string, any>) => {
     addComponent(type, defaultProps);
-    setShowBlockLibrary(false);
+    // Keep panel open when clicking to add
   };
 
   const handleSelectTemplate = (template: PageTemplate) => {
@@ -189,8 +190,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
           </button>
 
           <button
-            onClick={() => setShowBlockLibrary(!showBlockLibrary)}
-            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            onClick={onToggleBlockLibrary}
+            className={`group flex items-center overflow-hidden px-3 py-2 border rounded-lg transition-all ${
+              showBlockLibrary
+                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                : 'border-gray-300 hover:bg-gray-50'
+            }`}
             title="Add Component"
           >
             <Blocks size={16} className="flex-shrink-0" />
@@ -265,52 +270,60 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
 
       {/* Share Link */}
       <ShareLink isOpen={showShareLink} onClose={() => setShowShareLink(false)} />
+    </div>
+  );
+};
 
-      {/* Block Library Slide-out Panel */}
-      <div
-        className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 pointer-events-auto ${
-          showBlockLibrary ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-gray-50">
-            <h2 className="text-xl font-bold">Add Component</h2>
-            <button
-              onClick={() => setShowBlockLibrary(false)}
-              className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              ✕
-            </button>
-          </div>
+// Export BlockLibraryPanel as a separate component
+type BlockLibraryPanelProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-          {/* Component List */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {categories.map((category) => (
-              <div key={category} className="mb-6">
-                <h3 className="text-sm font-semibold uppercase text-gray-500 mb-3 px-2">{category}</h3>
-                <div className="space-y-2">
-                  {blocks
-                    .filter((block) => block.category === category)
-                    .map((block) => (
-                      <DraggableBlockButton
-                        key={block.type}
-                        blockType={block.type}
-                        blockName={block.name}
-                        category={block.category}
-                        defaultProps={block.defaultProps}
-                        onClick={() => handleAddBlock(block.type, block.defaultProps)}
-                      />
-                    ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({ isOpen, onClose }) => {
+  const { addComponent } = useEditorStore();
+  const categories = getCategories();
+  const blocks = getAllBlockConfigs();
+
+  const handleAddBlock = (type: string, defaultProps: Record<string, any>) => {
+    addComponent(type, defaultProps);
+  };
+
+  return (
+    <div className={`h-full flex flex-col bg-white border-l border-gray-200 ${isOpen ? 'w-96' : 'w-0'} transition-all duration-300 ease-in-out overflow-hidden`}>
+      {/* Header */}
+      <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-gray-50 flex-shrink-0">
+        <h2 className="text-xl font-bold">Add Component</h2>
+        <button
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-200 rounded-lg transition-colors"
+        >
+          ✕
+        </button>
       </div>
 
-      {/* Backdrop - disabled to allow drag and drop */}
-      {/* User can close the panel using the X button in the header */}
+      {/* Component List */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {categories.map((category) => (
+          <div key={category} className="mb-6">
+            <h3 className="text-sm font-semibold uppercase text-gray-500 mb-3 px-2">{category}</h3>
+            <div className="space-y-2">
+              {blocks
+                .filter((block) => block.category === category)
+                .map((block) => (
+                  <DraggableBlockButton
+                    key={block.type}
+                    blockType={block.type}
+                    blockName={block.name}
+                    category={block.category}
+                    defaultProps={block.defaultProps}
+                    onClick={() => handleAddBlock(block.type, block.defaultProps)}
+                  />
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
