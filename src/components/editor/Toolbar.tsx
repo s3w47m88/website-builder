@@ -67,56 +67,56 @@ export const Toolbar: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowBrandPanel(true)}
-            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title="Brand"
           >
-            <Briefcase size={16} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Brand</span>
+            <Briefcase size={16} className="flex-shrink-0" />
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Brand</span>
           </button>
 
           <button
             onClick={() => setShowTemplateSelector(true)}
-            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title="Templates"
           >
-            <Layout size={16} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Templates</span>
+            <Layout size={16} className="flex-shrink-0" />
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Templates</span>
           </button>
 
           <button
             onClick={() => setShowBlockLibrary(!showBlockLibrary)}
-            className="group flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
             title="Add Component"
           >
-            <Blocks size={16} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Add Component</span>
+            <Blocks size={16} className="flex-shrink-0" />
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Add Component</span>
           </button>
 
           <button
             onClick={() => setEditing(!isEditing)}
-            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title={isEditing ? 'Preview' : 'Edit'}
           >
-            {isEditing ? <Eye size={16} /> : <EyeOff size={16} />}
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">{isEditing ? 'Preview' : 'Edit'}</span>
+            {isEditing ? <Eye size={16} className="flex-shrink-0" /> : <EyeOff size={16} className="flex-shrink-0" />}
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">{isEditing ? 'Preview' : 'Edit'}</span>
           </button>
 
           <button
             onClick={() => setShowThemePanel(true)}
-            className="group flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             title="Theme"
           >
-            <Palette size={16} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Theme</span>
+            <Palette size={16} className="flex-shrink-0" />
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Theme</span>
           </button>
 
           <button
             onClick={() => setShowShareLink(true)}
-            className="group flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+            className="group flex items-center overflow-hidden px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
             title="Share"
           >
-            <Share2 size={16} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Share</span>
+            <Share2 size={16} className="flex-shrink-0" />
+            <span className="max-w-0 group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Share</span>
           </button>
 
           {isSaving ? (
