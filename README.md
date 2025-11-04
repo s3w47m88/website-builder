@@ -189,6 +189,125 @@ npm run build
 
 If you see errors about "Invalid hook call" or hooks being called in wrong places, refactor to pass data as parameters instead.
 
+## Critical Issue 2: TypeScript Build Failure - Missing Type Definitions
+
+### What Broke the Deployment
+
+**Failing Build ID**: `c13fc9a5-0de7-44cb-8e62-25fa387931c9`
+**Last Working Build ID**: `460e513e-e56f-4a7a-9830-559f1a5db393`
+
+**Error Message**:
+\`\`\`
+Type error: Could not find a declaration file for module 'pg'.
+'/app/node_modules/pg/esm/index.mjs' implicitly has an 'any' type.
+Try `npm i --save-dev @types/pg` if it exists or add a new declaration (.d.ts) file containing `declare module 'pg';`
+
+./src/app/api/run-migration/route.ts:2:24
+\`\`\`
+
+### The Problem
+
+**Root Cause**: The file \`src/app/api/run-migration/route.ts\` was created during debugging sessions to run database migrations programmatically. This file:
+
+1. **Imported the \`pg\` module** (PostgreSQL client) without corresponding TypeScript type definitions
+2. **Was localhost-only** (included a host check to prevent production use)
+3. **Should never have been deployed** - it was a debugging tool, not a production feature
+4. **Caused TypeScript compilation to fail** during \`next build\`
+
+### What Changed Between Builds
+
+**Files that changed in this session**:
+- \`src/components/editor/Canvas.tsx\` - Rebuilt component insertion feature
+- \`src/components/blocks/GalleryBlock.tsx\` - Replaced external placeholder images with base64 SVG
+- \`src/app/api/generate-image/route.ts\` - Replaced external placeholder images with base64 SVG
+
+**None of these changes should have affected deployment.**
+
+The real issue was that \`src/app/api/run-migration/route.ts\` existed from a **previous debugging session** (commit \`d00aad9\`) but TypeScript strict mode only started failing on it now due to build environment differences.
+
+### The Fix
+
+**Removed the problematic files**:
+1. Deleted \`src/app/api/run-migration/\` directory entirely
+2. Removed \`pg\` dependency from \`package.json\`
+
+**Why this is safe**:
+- This was a localhost-only debugging endpoint
+- Not used by any production features
+- Database migrations should be handled via Supabase dashboard or CLI, not through API routes
+
+### How to Prevent This
+
+**Rules to Follow:**
+
+1. **Never commit debugging API routes** - Keep them local or in a separate branch
+2. **If you add a new dependency, add its types** - Run \`npm i --save-dev @types/package-name\`
+3. **Test builds before pushing** - Run \`npm run build\` locally to catch TypeScript errors
+4. **Keep \`package.json\` clean** - Remove unused dependencies regularly
+5. **Use proper migration tools** - Supabase CLI or dashboard, not custom API routes
+
+**Debugging vs Production**:
+
+\`\`\`typescript
+// ❌ BAD - Debug endpoint that breaks builds
+// src/app/api/run-migration/route.ts
+import { Client } from 'pg'; // No @types/pg installed!
+
+export async function POST(request: NextRequest) {
+  // Localhost check doesn't prevent build failures
+  if (!host.includes('localhost')) return;
+  // ... migration logic
+}
+\`\`\`
+
+\`\`\`bash
+# ✅ GOOD - Use proper tools for migrations
+npx supabase db push
+# or run SQL directly in Supabase dashboard
+\`\`\`
+
+### Dependency Management
+
+**Before adding any npm package**:
+
+\`\`\`bash
+# 1. Install the package
+npm install package-name
+
+# 2. Check if types are needed
+npm search @types/package-name
+
+# 3. If types exist, install them
+npm install --save-dev @types/package-name
+
+# 4. Test the build
+npm run build
+\`\`\`
+
+**Audit dependencies regularly**:
+
+\`\`\`bash
+# List all dependencies
+npm list --depth=0
+
+# Remove unused packages
+npm uninstall package-name
+
+# Update package.json and package-lock.json
+npm install
+\`\`\`
+
+### Build Verification Checklist
+
+Before every deployment:
+
+- [ ] Run \`npm run build\` locally
+- [ ] Check for TypeScript errors
+- [ ] Verify no debugging files in \`src/app/api/\`
+- [ ] Confirm all dependencies have types (if needed)
+- [ ] Review git diff for unexpected changes
+- [ ] Test locally with \`npm start\` (production mode)
+
 ## License
 
 MIT

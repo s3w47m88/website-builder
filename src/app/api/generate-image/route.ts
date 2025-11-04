@@ -11,10 +11,22 @@ export async function POST(request: NextRequest) {
     const replicateApiToken = process.env.REPLICATE_API_TOKEN;
 
     if (!replicateApiToken) {
-      // Return a placeholder for now if API token not configured
-      console.warn('REPLICATE_API_TOKEN not configured, returning placeholder');
+      // Return a self-contained placeholder if API token not configured
+      console.warn('REPLICATE_API_TOKEN not configured, returning self-contained placeholder');
+
+      // Create a base64 encoded SVG placeholder
+      const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="${width}" height="${height}" fill="#e0e0e0"/>
+        <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="18" fill="#999999" text-anchor="middle" dy=".3em">
+          ${prompt.slice(0, 50)}${prompt.length > 50 ? '...' : ''}
+        </text>
+      </svg>`;
+
+      const base64Svg = Buffer.from(svg).toString('base64');
+      const dataUrl = `data:image/svg+xml;base64,${base64Svg}`;
+
       return NextResponse.json({
-        imageUrl: `https://via.placeholder.com/${width}x${height}?text=${encodeURIComponent(prompt)}`,
+        imageUrl: dataUrl,
       });
     }
 

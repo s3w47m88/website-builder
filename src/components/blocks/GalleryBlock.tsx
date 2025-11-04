@@ -44,6 +44,9 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
   );
 };
 
+// Self-contained placeholder image (gray square with text)
+const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTk5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5DbGljayB0byB1cGxvYWQgaW1hZ2U8L3RleHQ+PC9zdmc+';
+
 export const galleryBlockConfig = {
   type: 'gallery',
   name: 'Image Gallery',
@@ -51,9 +54,9 @@ export const galleryBlockConfig = {
   defaultProps: {
     title: 'Our Gallery',
     images: [
-      { url: 'https://via.placeholder.com/400', alt: 'Image 1' },
-      { url: 'https://via.placeholder.com/400', alt: 'Image 2' },
-      { url: 'https://via.placeholder.com/400', alt: 'Image 3' },
+      { url: placeholderImage, alt: 'Image 1' },
+      { url: placeholderImage, alt: 'Image 2' },
+      { url: placeholderImage, alt: 'Image 3' },
     ],
     columns: 3,
   },
