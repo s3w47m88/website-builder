@@ -43,6 +43,7 @@ function EditorContent() {
   );
 
   const handleDragStart = (event: DragStartEvent) => {
+    console.log('Drag started:', event.active.id, event.active.data.current);
     setActiveId(event.active.id as string);
   };
 
@@ -50,11 +51,14 @@ function EditorContent() {
     const { active, over } = event;
     setActiveId(null);
 
+    console.log('Drag ended:', { activeId: active.id, overId: over?.id, activeData: active.data.current });
+
     // Check if this is a new block being dragged from the toolbar
     if (active.data.current?.type === 'NEW_BLOCK') {
       const { blockType, defaultProps } = active.data.current;
 
-      // Add the component to the canvas
+      // Add the component to the canvas (don't require specific drop zone)
+      console.log('Adding new component:', blockType);
       addComponent(blockType, defaultProps);
       return;
     }
@@ -158,8 +162,8 @@ function EditorContent() {
         </div>
         <DragOverlay>
           {activeId ? (
-            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
-              Dragging component...
+            <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-2xl border-2 border-blue-600 font-semibold">
+              ✨ Drop to add component
             </div>
           ) : null}
         </DragOverlay>
@@ -207,8 +211,8 @@ function EditorContent() {
         </div>
         <DragOverlay>
           {activeId ? (
-            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
-              Dragging component...
+            <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-2xl border-2 border-blue-600 font-semibold">
+              ✨ Drop to add component
             </div>
           ) : null}
         </DragOverlay>
@@ -235,8 +239,8 @@ function EditorContent() {
       </div>
       <DragOverlay>
         {activeId ? (
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
-            Dragging component...
+          <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-2xl border-2 border-blue-600 font-semibold">
+            ✨ Drop to add component
           </div>
         ) : null}
       </DragOverlay>

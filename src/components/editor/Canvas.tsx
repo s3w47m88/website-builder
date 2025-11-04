@@ -31,18 +31,23 @@ export const Canvas: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      ref={setNodeRef}
+      className={`min-h-screen bg-gray-50 transition-all ${
+        isOver ? 'bg-blue-50 ring-4 ring-blue-400 ring-inset' : ''
+      }`}
+    >
       <SortableContext items={components.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-        <div
-          ref={setNodeRef}
-          className={`min-h-screen transition-colors ${
-            isOver ? 'bg-blue-50 border-2 border-blue-400 border-dashed' : ''
-          }`}
-        >
+        <div className="min-h-screen">
           {components.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
-              <p className="text-lg">No components yet</p>
-              <p className="text-sm">Drag components from the panel or click "Templates" to get started</p>
+              <p className="text-lg font-semibold">Drop components here</p>
+              <p className="text-sm mt-2">Drag components from the "Add Component" panel</p>
+              <div className="mt-6 inline-block px-6 py-3 border-2 border-dashed border-gray-300 rounded-lg">
+                <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
             </div>
           ) : (
             components
