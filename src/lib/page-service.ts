@@ -27,8 +27,15 @@ export async function savePage(pageConfig: Omit<PageConfig, 'id' | 'created_at' 
     .single();
 
   if (error) {
-    console.error('Error saving page:', error);
-    throw new Error('Failed to save page');
+    console.error('Error saving page:', {
+      error,
+      organizationId,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    throw new Error(`Failed to save page: ${error.message || 'Unknown error'}`);
   }
 
   return data as PageConfig;
@@ -47,8 +54,15 @@ export async function updatePage(id: string, pageConfig: Partial<PageConfig>) {
     .single();
 
   if (error) {
-    console.error('Error updating page:', error);
-    throw new Error('Failed to update page');
+    console.error('Error updating page:', {
+      error,
+      pageId: id,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    throw new Error(`Failed to update page: ${error.message || 'Unknown error'}`);
   }
 
   return data as PageConfig;

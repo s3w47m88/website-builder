@@ -183,8 +183,16 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         const pageData = { name: pageName, components, theme };
 
         if (currentPageId) {
-          await updatePage(currentPageId, pageData);
-          console.log('Auto-saved successfully');
+          try {
+            await updatePage(currentPageId, pageData);
+            console.log('Auto-saved successfully');
+          } catch (updateError: any) {
+            console.error('Failed to update page, trying to create new:', updateError);
+            // If update fails, the page might not exist - try creating it
+            const savedPage = await savePage(pageData);
+            set({ currentPageId: savedPage.id });
+            console.log('Page created and auto-saved');
+          }
         } else {
           const savedPage = await savePage(pageData);
           set({ currentPageId: savedPage.id });

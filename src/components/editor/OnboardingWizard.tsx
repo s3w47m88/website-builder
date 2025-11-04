@@ -38,7 +38,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onCo
     setSelectedTemplate(template);
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (selectedTemplate) {
       // Apply form data to selected template
       const customizedTemplate = {
@@ -61,13 +61,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onCo
         }),
       };
 
-      loadPageToStore({
-        id: crypto.randomUUID(),
-        name: formData.brandName || 'My Site',
-        components: customizedTemplate.components,
-        theme: customizedTemplate.theme,
-      });
-      setPageName(formData.brandName || 'My Site');
+      try {
+        // Save to database first
+        const { savePage } = await import('@/lib/page-service');
+        const savedPage = await savePage({
+          name: formData.brandName || 'My Site',
+          components: customizedTemplate.components,
+          theme: customizedTemplate.theme,
+        });
+
+        // Then load into store
+        loadPageToStore(savedPage);
+        setPageName(savedPage.name);
+      } catch (error) {
+        console.error('Failed to create site:', error);
+        alert('Failed to create site. Please try again.');
+        return;
+      }
     }
     onComplete();
   };
