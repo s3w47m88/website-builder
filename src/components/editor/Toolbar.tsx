@@ -18,8 +18,6 @@ import { CSS } from '@dnd-kit/utilities';
 
 type ToolbarProps = {
   onCreateNewSite?: () => void;
-  showBlockLibrary?: boolean;
-  onToggleBlockLibrary?: () => void;
 };
 
 type DraggableBlockButtonProps = {
@@ -69,7 +67,7 @@ const DraggableBlockButton: React.FC<DraggableBlockButtonProps> = ({
   );
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite, showBlockLibrary = false, onToggleBlockLibrary }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
   const { addComponent, isEditing, setEditing, components, theme, pageName, currentPageId, setPageName, setCurrentPageId, loadPage: loadPageToStore, resetEditor, isSaving } = useEditorStore();
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -187,19 +185,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite, showBlockLibr
           >
             <Layout size={16} className="flex-shrink-0" />
             <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Templates</span>
-          </button>
-
-          <button
-            onClick={onToggleBlockLibrary}
-            className={`group flex items-center overflow-hidden px-3 py-2 border rounded-lg transition-all ${
-              showBlockLibrary
-                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                : 'border-gray-300 hover:bg-gray-50'
-            }`}
-            title="Add Component"
-          >
-            <Blocks size={16} className="flex-shrink-0" />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 whitespace-nowrap">Add Component</span>
           </button>
 
           <button
