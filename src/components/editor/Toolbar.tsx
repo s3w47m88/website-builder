@@ -268,7 +268,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
 
       {/* Block Library Slide-out Panel */}
       <div
-        className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed right-0 top-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 pointer-events-auto ${
           showBlockLibrary ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -309,14 +309,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onCreateNewSite }) => {
         </div>
       </div>
 
-      {/* Backdrop */}
-      {showBlockLibrary && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40 transition-opacity pointer-events-auto"
-          onClick={() => setShowBlockLibrary(false)}
-          style={{ pointerEvents: 'auto' }}
-        />
-      )}
+      {/* Backdrop - disabled to allow drag and drop */}
+      {/* User can close the panel using the X button in the header */}
     </div>
   );
 };
