@@ -7,6 +7,7 @@ import { ComponentData } from '@/lib/supabase';
 import { useEditorStore } from '@/store/editor-store';
 import { GripVertical, Trash2, Image as ImageIcon } from 'lucide-react';
 import { ImageUploader } from './ImageUploader';
+import { FloatingTextToolbar } from './FloatingTextToolbar';
 import { getBlockComponent } from '@/lib/block-registry';
 
 type EditableBlockProps = {
@@ -23,6 +24,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({ component, disable
   const { updateComponent, removeComponent, theme } = useEditorStore();
   const [isEditing, setIsEditing] = useState(false);
   const [showImageUploader, setShowImageUploader] = useState(false);
+  const [showTextToolbar, setShowTextToolbar] = useState(false);
   const [currentImageKey, setCurrentImageKey] = useState<string | null>(null);
 
   const style = {
@@ -46,10 +48,32 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({ component, disable
     }
   };
 
+  const handleTextSelect = () => {
+    setShowTextToolbar(true);
+  };
+
+  const handleTextFocus = (e: React.FocusEvent) => {
+    e.stopPropagation();
+    setShowTextToolbar(true);
+  };
+
+  const handleTextBlur = (e: React.FocusEvent) => {
+    // Don't hide if we're clicking on the toolbar
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget?.closest('.floating-text-toolbar')) {
+      return;
+    }
+
+    // Delay hiding to allow toolbar interactions
+    setTimeout(() => {
+      setShowTextToolbar(false);
+    }, 150);
+  };
+
   if (disabled) {
     return (
       <div ref={setNodeRef}>
-        {renderComponent(component, false, handleTextEdit, handleImageEdit, theme)}
+        {renderComponent(component, false, handleTextEdit, handleImageEdit, theme, updateComponent)}
         <ImageUploader
           isOpen={showImageUploader}
           onClose={() => setShowImageUploader(false)}
@@ -92,7 +116,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({ component, disable
 
       {/* Component content with inline editing */}
       <div className="relative">
-        {renderComponent(component, true, handleTextEdit, handleImageEdit, theme)}
+        {renderComponent(component, true, handleTextEdit, handleImageEdit, theme, updateComponent, handleTextFocus, handleTextSelect, handleTextBlur)}
       </div>
 
       {/* Image Uploader Modal */}
@@ -101,6 +125,12 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({ component, disable
         onClose={() => setShowImageUploader(false)}
         onImageSelected={handleImageSelected}
         currentImageUrl={currentImageKey ? component.props[currentImageKey] : undefined}
+      />
+
+      {/* Floating Text Toolbar */}
+      <FloatingTextToolbar
+        isVisible={showTextToolbar}
+        onClose={() => setShowTextToolbar(false)}
       />
     </div>
   );
@@ -111,7 +141,11 @@ function renderComponent(
   editable: boolean,
   onTextEdit: (key: string, value: string) => void,
   onImageEdit: (key: string) => void,
-  theme: any
+  theme: any,
+  updateComponent?: (id: string, props: Record<string, any>) => void,
+  onTextFocus?: () => void,
+  onTextSelect?: () => void,
+  onTextBlur?: () => void
 ) {
   const { type, props } = component;
 
@@ -142,7 +176,14 @@ function renderComponent(
             className="text-5xl md:text-6xl font-bold mb-4 animate-slide-up"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('title', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('title', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
           >
             {props.title}
@@ -151,7 +192,14 @@ function renderComponent(
             className="text-xl md:text-2xl mb-8 opacity-90 animate-slide-up animation-delay-200"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('subtitle', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('subtitle', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
           >
             {props.subtitle}
@@ -161,7 +209,14 @@ function renderComponent(
             className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-slide-up animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('ctaText', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('ctaText', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{
               outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none',
               cursor: editable ? 'text' : 'default',
@@ -204,7 +259,14 @@ function renderComponent(
             className="text-4xl font-bold text-white mb-4 animate-fade-in"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('heading', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('heading', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
           >
             {props.heading}
@@ -213,7 +275,14 @@ function renderComponent(
             className="text-xl text-white/90 mb-8 animate-fade-in animation-delay-200"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('description', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('description', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
           >
             {props.description}
@@ -223,7 +292,14 @@ function renderComponent(
             className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fade-in animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('buttonText', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('buttonText', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{
               outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none',
               cursor: editable ? 'text' : 'default',
@@ -247,7 +323,14 @@ function renderComponent(
             className="text-4xl font-bold text-center mb-12 animate-fade-in"
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('title', e.currentTarget.textContent || '')}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('title', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
             style={{
               outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
               cursor: editable ? 'text' : 'default',
@@ -313,7 +396,14 @@ function renderComponent(
             className={`prose prose-lg ${alignmentClasses[props.alignment as keyof typeof alignmentClasses] || 'text-left'} ${fontSizeClasses[props.fontSize as keyof typeof fontSizeClasses] || 'text-base'}`}
             contentEditable={editable}
             suppressContentEditableWarning
-            onBlur={(e) => editable && onTextEdit('content', e.currentTarget.innerHTML)}
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('content', e.currentTarget.innerHTML);
+                onTextBlur?.();
+              }
+            }}
             dangerouslySetInnerHTML={{ __html: props.content }}
             style={{
               outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
@@ -324,6 +414,340 @@ function renderComponent(
         </div>
       </div>
     );
+  }
+
+  // About Block
+  if (type === 'about') {
+    return (
+      <div className="py-16 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative">
+              <img
+                src={props.imageUrl}
+                alt={props.candidateName}
+                className="w-full rounded-lg shadow-xl"
+              />
+              {editable && (
+                <button
+                  onClick={() => onImageEdit('imageUrl')}
+                  className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur rounded-lg hover:bg-white transition-colors shadow-lg"
+                  title="Change photo"
+                >
+                  <ImageIcon size={20} />
+                </button>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                {props.flagEmoji && <span className="text-4xl">🇺🇸</span>}
+                <div className="flex-1">
+                  <h2
+                    className="text-4xl font-bold"
+                    contentEditable={editable}
+                    suppressContentEditableWarning
+                    onFocus={() => editable && onTextFocus?.()}
+                    onMouseUp={() => editable && onTextSelect?.()}
+                    onBlur={(e) => {
+                      if (editable) {
+                        onTextEdit('candidateName', e.currentTarget.textContent || '');
+                        onTextBlur?.();
+                      }
+                    }}
+                    style={{
+                      outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                      cursor: editable ? 'text' : 'default',
+                    }}
+                  >
+                    {props.candidateName}
+                  </h2>
+                  <p
+                    className="text-xl text-gray-600 mt-1"
+                    contentEditable={editable}
+                    suppressContentEditableWarning
+                    onFocus={() => editable && onTextFocus?.()}
+                    onMouseUp={() => editable && onTextSelect?.()}
+                    onBlur={(e) => {
+                      if (editable) {
+                        onTextEdit('candidateTitle', e.currentTarget.textContent || '');
+                        onTextBlur?.();
+                      }
+                    }}
+                    style={{
+                      outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                      cursor: editable ? 'text' : 'default',
+                    }}
+                  >
+                    {props.candidateTitle}
+                  </p>
+                </div>
+              </div>
+
+              <div className="prose prose-lg max-w-none mt-6">
+                <p
+                  className="text-gray-700 leading-relaxed whitespace-pre-line"
+                  contentEditable={editable}
+                  suppressContentEditableWarning
+                  onFocus={() => editable && onTextFocus?.()}
+                  onMouseUp={() => editable && onTextSelect?.()}
+                  onBlur={(e) => {
+                    if (editable) {
+                      onTextEdit('bio', e.currentTarget.textContent || '');
+                      onTextBlur?.();
+                    }
+                  }}
+                  style={{
+                    outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                    cursor: editable ? 'text' : 'default',
+                  }}
+                >
+                  {props.bio}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // News Block
+  if (type === 'news') {
+    return (
+      <div className="py-16 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2
+            className="text-4xl font-bold text-center mb-12"
+            contentEditable={editable}
+            suppressContentEditableWarning
+            onFocus={() => editable && onTextFocus?.()}
+            onMouseUp={() => editable && onTextSelect?.()}
+            onBlur={(e) => {
+              if (editable) {
+                onTextEdit('title', e.currentTarget.textContent || '');
+                onTextBlur?.();
+              }
+            }}
+            style={{
+              outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+              cursor: editable ? 'text' : 'default',
+            }}
+          >
+            {props.title}
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {props.articles?.map((article: any, index: number) => (
+              <article key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="p-6">
+                  <p
+                    className="text-sm text-gray-500 mb-2"
+                    contentEditable={editable}
+                    suppressContentEditableWarning
+                    onFocus={() => editable && onTextFocus?.()}
+                    onMouseUp={() => editable && onTextSelect?.()}
+                    onBlur={(e) => {
+                      if (editable) {
+                        const updatedArticles = [...props.articles];
+                        updatedArticles[index] = { ...updatedArticles[index], date: e.currentTarget.textContent || '' };
+                        updateComponent?.(component.id, { articles: updatedArticles });
+                        onTextBlur?.();
+                      }
+                    }}
+                    style={{
+                      outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                      cursor: editable ? 'text' : 'default',
+                    }}
+                  >
+                    {article.date}
+                  </p>
+                  <h3
+                    className="text-xl font-bold mb-3"
+                    contentEditable={editable}
+                    suppressContentEditableWarning
+                    onFocus={() => editable && onTextFocus?.()}
+                    onMouseUp={() => editable && onTextSelect?.()}
+                    onBlur={(e) => {
+                      if (editable) {
+                        const updatedArticles = [...props.articles];
+                        updatedArticles[index] = { ...updatedArticles[index], headline: e.currentTarget.textContent || '' };
+                        updateComponent?.(component.id, { articles: updatedArticles });
+                        onTextBlur?.();
+                      }
+                    }}
+                    style={{
+                      outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                      cursor: editable ? 'text' : 'default',
+                    }}
+                  >
+                    {article.headline}
+                  </h3>
+                  <p
+                    className="text-gray-600 mb-4"
+                    contentEditable={editable}
+                    suppressContentEditableWarning
+                    onFocus={() => editable && onTextFocus?.()}
+                    onMouseUp={() => editable && onTextSelect?.()}
+                    onBlur={(e) => {
+                      if (editable) {
+                        const updatedArticles = [...props.articles];
+                        updatedArticles[index] = { ...updatedArticles[index], excerpt: e.currentTarget.textContent || '' };
+                        updateComponent?.(component.id, { articles: updatedArticles });
+                        onTextBlur?.();
+                      }
+                    }}
+                    style={{
+                      outline: editable ? '2px dashed rgba(59, 130, 246, 0.5)' : 'none',
+                      cursor: editable ? 'text' : 'default',
+                    }}
+                  >
+                    {article.excerpt}
+                  </p>
+                  <a
+                    href={article.link}
+                    className="text-blue-600 hover:text-blue-800 font-semibold"
+                  >
+                    Read More →
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Footer Block
+  if (type === 'footer') {
+    return (
+      <footer className="bg-gray-900 text-white py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            {/* Company Info */}
+            <div>
+              <h3
+                className="text-2xl font-bold mb-2"
+                contentEditable={editable}
+                suppressContentEditableWarning
+                onFocus={() => editable && onTextFocus?.()}
+                onMouseUp={() => editable && onTextSelect?.()}
+                onBlur={(e) => {
+                  if (editable) {
+                    onTextEdit('companyName', e.currentTarget.textContent || '');
+                    onTextBlur?.();
+                  }
+                }}
+                style={{
+                  outline: editable ? '2px dashed rgba(255, 255, 255, 0.3)' : 'none',
+                  cursor: editable ? 'text' : 'default',
+                }}
+              >
+                {props.companyName}
+              </h3>
+              <p
+                className="text-gray-400"
+                contentEditable={editable}
+                suppressContentEditableWarning
+                onFocus={() => editable && onTextFocus?.()}
+                onMouseUp={() => editable && onTextSelect?.()}
+                onBlur={(e) => {
+                  if (editable) {
+                    onTextEdit('tagline', e.currentTarget.textContent || '');
+                    onTextBlur?.();
+                  }
+                }}
+                style={{
+                  outline: editable ? '2px dashed rgba(255, 255, 255, 0.3)' : 'none',
+                  cursor: editable ? 'text' : 'default',
+                }}
+              >
+                {props.tagline}
+              </p>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                {props.links?.map((link: any, index: number) => (
+                  <li key={index}>
+                    <a
+                      href={link.url}
+                      className="text-gray-400 hover:text-white transition-colors"
+                      contentEditable={editable}
+                      suppressContentEditableWarning
+                      onFocus={() => editable && onTextFocus?.()}
+                      onMouseUp={() => editable && onTextSelect?.()}
+                      onBlur={(e) => {
+                        if (editable) {
+                          const updatedLinks = [...props.links];
+                          updatedLinks[index] = { ...updatedLinks[index], title: e.currentTarget.textContent || '' };
+                          updateComponent?.(component.id, { links: updatedLinks });
+                          onTextBlur?.();
+                        }
+                      }}
+                      style={{
+                        outline: editable ? '2px dashed rgba(255, 255, 255, 0.3)' : 'none',
+                        cursor: editable ? 'text' : 'default',
+                      }}
+                    >
+                      {link.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Social */}
+            <div>
+              <h4 className="font-semibold mb-4">Follow Us</h4>
+              <div className="flex gap-4">
+                {props.socialLinks?.map((social: any, index: number) => (
+                  <a
+                    key={index}
+                    href={social.url}
+                    className="text-2xl hover:text-blue-400 transition-colors"
+                    title={social.platform}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+            © {new Date().getFullYear()} {props.companyName}. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
+  // Grid Block - needs special handling for editable callbacks
+  if (type === 'grid') {
+    const GridComponent = getBlockComponent('grid');
+    if (GridComponent) {
+      return (
+        <GridComponent
+          {...props}
+          editable={editable}
+          onUpdateCells={(cells: any[]) => {
+            if (updateComponent) {
+              updateComponent(component.id, { cells });
+            }
+          }}
+          onUpdateGrid={(rows: number, columns: number) => {
+            if (updateComponent) {
+              updateComponent(component.id, { rows, columns });
+            }
+          }}
+        />
+      );
+    }
   }
 
   // Use block registry for other component types

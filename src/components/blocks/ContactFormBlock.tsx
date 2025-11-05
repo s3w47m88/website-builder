@@ -94,7 +94,8 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
 export const contactFormBlockConfig = {
   type: 'contact-form',
   name: 'Contact Form',
-  category: 'forms',
+  category: 'components',
+  thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjI5MzciIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNvbnRhY3QgRm9ybTwvdGV4dD48cmVjdCB4PSI0MCIgeT0iNDUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjAiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjEiLz48cmVjdCB4PSI0MCIgeT0iNzAiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjAiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjEiLz48cmVjdCB4PSI0MCIgeT0iOTUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMzUiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjEiLz48cmVjdCB4PSI5MCIgeT0iMTQwIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjI1IiByeD0iNiIgZmlsbD0iIzNiODJmNiIvPjwvc3ZnPg==',
   defaultProps: {
     title: 'Get In Touch',
     description: 'We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',

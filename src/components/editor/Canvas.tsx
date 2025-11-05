@@ -8,15 +8,15 @@ import { useEditorStore } from '@/store/editor-store';
 
 export const Canvas: React.FC = () => {
   const { components, isEditing, addComponent, reorderComponents } = useEditorStore();
-  const [showComponentPicker, setShowComponentPicker] = useState(false);
+  const [showSectionPicker, setShowSectionPicker] = useState(false);
   const [insertPosition, setInsertPosition] = useState<number | null>(null);
 
-  const handleAddComponentClick = (position: number) => {
+  const handleAddSectionClick = (position: number) => {
     setInsertPosition(position);
-    setShowComponentPicker(true);
+    setShowSectionPicker(true);
   };
 
-  const handleSelectComponent = (componentType: string, defaultProps: any) => {
+  const handleSelectSection = (componentType: string, defaultProps: any) => {
     if (insertPosition === null) return;
 
     // Create new component
@@ -38,7 +38,7 @@ export const Canvas: React.FC = () => {
     }));
 
     reorderComponents(reorderedComponents);
-    setShowComponentPicker(false);
+    setShowSectionPicker(false);
     setInsertPosition(null);
   };
 
@@ -64,45 +64,46 @@ export const Canvas: React.FC = () => {
       {components.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-xl font-semibold text-gray-700 mb-4">Start building your page</p>
-          <p className="text-gray-500 mb-8">Add your first component or choose a template</p>
+          <p className="text-gray-500 mb-8">Add your first section or choose a template</p>
           <button
-            onClick={() => handleAddComponentClick(0)}
+            onClick={() => handleAddSectionClick(0)}
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-lg transition-all"
           >
             <Plus size={20} />
-            Add First Component
+            Add First Section
           </button>
         </div>
       ) : (
         <div>
-          {/* Add component divider at top */}
-          <ComponentDivider onClick={() => handleAddComponentClick(0)} />
+          {/* Add section divider at top */}
+          <SectionDivider onClick={() => handleAddSectionClick(0)} />
 
-          {/* Existing components with dividers between */}
+          {/* Existing sections with dividers between */}
           {sortedComponents.map((component, index) => (
             <React.Fragment key={component.id}>
               <EditableBlock component={component} />
-              <ComponentDivider onClick={() => handleAddComponentClick(index + 1)} />
+              <SectionDivider onClick={() => handleAddSectionClick(index + 1)} />
             </React.Fragment>
           ))}
         </div>
       )}
 
-      {/* Component Picker Modal */}
+      {/* Section Picker Modal */}
       <ComponentPicker
-        isOpen={showComponentPicker}
+        isOpen={showSectionPicker}
         onClose={() => {
-          setShowComponentPicker(false);
+          setShowSectionPicker(false);
           setInsertPosition(null);
         }}
-        onSelectComponent={handleSelectComponent}
+        onSelectComponent={handleSelectSection}
+        filterCategory="sections"
       />
     </div>
   );
 };
 
-// Component Divider - appears on hover to add components
-const ComponentDivider: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+// Section Divider - appears on hover to add sections
+const SectionDivider: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -127,7 +128,7 @@ const ComponentDivider: React.FC<{ onClick: () => void }> = ({ onClick }) => {
             className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-lg whitespace-nowrap transition-colors"
           >
             <Plus size={16} />
-            Add Component
+            Add Section
           </button>
         </div>
       </div>

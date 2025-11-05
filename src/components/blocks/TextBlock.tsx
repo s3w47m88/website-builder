@@ -41,7 +41,8 @@ export const TextBlock: React.FC<TextBlockProps> = ({
 export const textBlockConfig = {
   type: 'text',
   name: 'Text Content',
-  category: 'content',
+  category: 'components',
+  thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjIwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjIwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzFmMjkzNyI+VGV4dCBDb250ZW50PC90ZXh0PjxsaW5lIHgxPSIyMCIgeTE9Ijc1IiB4Mj0iMzAwIiB5Mj0iNzUiIHN0cm9rZT0iIzRiNTU2MyIgc3Ryb2tlLXdpZHRoPSIyIi8+PGxpbmUgeDE9IjIwIiB5MT0iOTUiIHgyPSIzMDAiIHkyPSI5NSIgc3Ryb2tlPSIjNGI1NTYzIiBzdHJva2Utd2lkdGg9IjIiLz48bGluZSB4MT0iMjAiIHkxPSIxMTUiIHgyPSIyNTAiIHkyPSIxMTUiIHN0cm9rZT0iIzRiNTU2MyIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+',
   defaultProps: {
     content: '<p>Add your text content here. You can use rich text formatting.</p>',
     alignment: 'left',

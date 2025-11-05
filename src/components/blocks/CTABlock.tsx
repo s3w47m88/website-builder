@@ -45,7 +45,8 @@ export const CTABlock: React.FC<CTABlockProps> = ({
 export const ctaBlockConfig = {
   type: 'cta',
   name: 'Call to Action',
-  category: 'marketing',
+  category: 'sections',
+  thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzNiODJmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Q2FsbCB0byBBY3Rpb248L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkRlc2NyaXB0aW9uPC90ZXh0PjxyZWN0IHg9IjExMCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjM1IiByeD0iNSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=',
   defaultProps: {
     heading: 'Ready to Get Started?',
     description: 'Join thousands of users building amazing websites',

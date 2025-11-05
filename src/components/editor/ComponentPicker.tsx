@@ -8,22 +8,26 @@ type ComponentPickerProps = {
   isOpen: boolean;
   onClose: () => void;
   onSelectComponent: (type: string, defaultProps: Record<string, any>) => void;
+  filterCategory?: string; // Optional: only show blocks from this category
 };
 
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   isOpen,
   onClose,
   onSelectComponent,
+  filterCategory,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>(filterCategory || 'All');
 
-  const categories = ['All', ...getCategories()];
+  const categories = filterCategory ? [filterCategory] : ['All', ...getCategories()];
   const blocks = getAllBlockConfigs();
 
   const filteredBlocks = blocks.filter((block) => {
     const matchesSearch = block.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || block.category === selectedCategory;
+    const matchesCategory = filterCategory
+      ? block.category === filterCategory
+      : (selectedCategory === 'All' || block.category === selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -34,7 +38,11 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Add Component</h2>
+          <h2 className="text-2xl font-bold">
+            {filterCategory === 'sections' ? 'Add Section' :
+             filterCategory === 'components' ? 'Add Component' :
+             'Add Component'}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -69,7 +77,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {category}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
               </button>
             ))}
           </div>
@@ -90,8 +98,12 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
                   onClick={() => onSelectComponent(block.type, block.defaultProps)}
                   className="group border-2 border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
                 >
-                  <div className="aspect-video bg-gray-100 rounded mb-3 flex items-center justify-center">
-                    <span className="text-4xl">📦</span>
+                  <div className="aspect-video bg-gray-100 rounded mb-3 flex items-center justify-center overflow-hidden">
+                    {block.thumbnail ? (
+                      <img src={block.thumbnail} alt={block.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-4xl">📦</span>
+                    )}
                   </div>
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 mb-1">
                     {block.name}
