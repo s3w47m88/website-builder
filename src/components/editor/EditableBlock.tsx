@@ -143,9 +143,9 @@ function renderComponent(
   onImageEdit: (key: string) => void,
   theme: any,
   updateComponent?: (id: string, props: Record<string, any>) => void,
-  onTextFocus?: () => void,
+  onTextFocus?: (e: React.FocusEvent) => void,
   onTextSelect?: () => void,
-  onTextBlur?: () => void
+  onTextBlur?: (e: React.FocusEvent) => void
 ) {
   const { type, props } = component;
 
@@ -176,12 +176,12 @@ function renderComponent(
             className="text-5xl md:text-6xl font-bold mb-4 animate-slide-up"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('title', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
@@ -192,12 +192,12 @@ function renderComponent(
             className="text-xl md:text-2xl mb-8 opacity-90 animate-slide-up animation-delay-200"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('subtitle', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
@@ -209,12 +209,12 @@ function renderComponent(
             className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-slide-up animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('ctaText', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{
@@ -259,12 +259,12 @@ function renderComponent(
             className="text-4xl font-bold text-white mb-4 animate-fade-in"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('heading', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
@@ -275,12 +275,12 @@ function renderComponent(
             className="text-xl text-white/90 mb-8 animate-fade-in animation-delay-200"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('description', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{ outline: editable ? '2px dashed rgba(255,255,255,0.3)' : 'none', cursor: editable ? 'text' : 'default' }}
@@ -292,12 +292,12 @@ function renderComponent(
             className="inline-block px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fade-in animation-delay-400"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('buttonText', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{
@@ -323,12 +323,12 @@ function renderComponent(
             className="text-4xl font-bold text-center mb-12 animate-fade-in"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('title', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{
@@ -396,12 +396,12 @@ function renderComponent(
             className={`prose prose-lg ${alignmentClasses[props.alignment as keyof typeof alignmentClasses] || 'text-left'} ${fontSizeClasses[props.fontSize as keyof typeof fontSizeClasses] || 'text-base'}`}
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('content', e.currentTarget.innerHTML);
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             dangerouslySetInnerHTML={{ __html: props.content }}
@@ -447,12 +447,12 @@ function renderComponent(
                     className="text-4xl font-bold"
                     contentEditable={editable}
                     suppressContentEditableWarning
-                    onFocus={() => editable && onTextFocus?.()}
+                    onFocus={(e) => editable && onTextFocus?.(e)}
                     onMouseUp={() => editable && onTextSelect?.()}
                     onBlur={(e) => {
                       if (editable) {
                         onTextEdit('candidateName', e.currentTarget.textContent || '');
-                        onTextBlur?.();
+                        onTextBlur?.(e);
                       }
                     }}
                     style={{
@@ -466,12 +466,12 @@ function renderComponent(
                     className="text-xl text-gray-600 mt-1"
                     contentEditable={editable}
                     suppressContentEditableWarning
-                    onFocus={() => editable && onTextFocus?.()}
+                    onFocus={(e) => editable && onTextFocus?.(e)}
                     onMouseUp={() => editable && onTextSelect?.()}
                     onBlur={(e) => {
                       if (editable) {
                         onTextEdit('candidateTitle', e.currentTarget.textContent || '');
-                        onTextBlur?.();
+                        onTextBlur?.(e);
                       }
                     }}
                     style={{
@@ -489,12 +489,12 @@ function renderComponent(
                   className="text-gray-700 leading-relaxed whitespace-pre-line"
                   contentEditable={editable}
                   suppressContentEditableWarning
-                  onFocus={() => editable && onTextFocus?.()}
+                  onFocus={(e) => editable && onTextFocus?.(e)}
                   onMouseUp={() => editable && onTextSelect?.()}
                   onBlur={(e) => {
                     if (editable) {
                       onTextEdit('bio', e.currentTarget.textContent || '');
-                      onTextBlur?.();
+                      onTextBlur?.(e);
                     }
                   }}
                   style={{
@@ -521,12 +521,12 @@ function renderComponent(
             className="text-4xl font-bold text-center mb-12"
             contentEditable={editable}
             suppressContentEditableWarning
-            onFocus={() => editable && onTextFocus?.()}
+            onFocus={(e) => editable && onTextFocus?.(e)}
             onMouseUp={() => editable && onTextSelect?.()}
             onBlur={(e) => {
               if (editable) {
                 onTextEdit('title', e.currentTarget.textContent || '');
-                onTextBlur?.();
+                onTextBlur?.(e);
               }
             }}
             style={{
@@ -545,14 +545,14 @@ function renderComponent(
                     className="text-sm text-gray-500 mb-2"
                     contentEditable={editable}
                     suppressContentEditableWarning
-                    onFocus={() => editable && onTextFocus?.()}
+                    onFocus={(e) => editable && onTextFocus?.(e)}
                     onMouseUp={() => editable && onTextSelect?.()}
                     onBlur={(e) => {
                       if (editable) {
                         const updatedArticles = [...props.articles];
                         updatedArticles[index] = { ...updatedArticles[index], date: e.currentTarget.textContent || '' };
                         updateComponent?.(component.id, { articles: updatedArticles });
-                        onTextBlur?.();
+                        onTextBlur?.(e);
                       }
                     }}
                     style={{
@@ -566,14 +566,14 @@ function renderComponent(
                     className="text-xl font-bold mb-3"
                     contentEditable={editable}
                     suppressContentEditableWarning
-                    onFocus={() => editable && onTextFocus?.()}
+                    onFocus={(e) => editable && onTextFocus?.(e)}
                     onMouseUp={() => editable && onTextSelect?.()}
                     onBlur={(e) => {
                       if (editable) {
                         const updatedArticles = [...props.articles];
                         updatedArticles[index] = { ...updatedArticles[index], headline: e.currentTarget.textContent || '' };
                         updateComponent?.(component.id, { articles: updatedArticles });
-                        onTextBlur?.();
+                        onTextBlur?.(e);
                       }
                     }}
                     style={{
@@ -587,14 +587,14 @@ function renderComponent(
                     className="text-gray-600 mb-4"
                     contentEditable={editable}
                     suppressContentEditableWarning
-                    onFocus={() => editable && onTextFocus?.()}
+                    onFocus={(e) => editable && onTextFocus?.(e)}
                     onMouseUp={() => editable && onTextSelect?.()}
                     onBlur={(e) => {
                       if (editable) {
                         const updatedArticles = [...props.articles];
                         updatedArticles[index] = { ...updatedArticles[index], excerpt: e.currentTarget.textContent || '' };
                         updateComponent?.(component.id, { articles: updatedArticles });
-                        onTextBlur?.();
+                        onTextBlur?.(e);
                       }
                     }}
                     style={{
@@ -631,12 +631,12 @@ function renderComponent(
                 className="text-2xl font-bold mb-2"
                 contentEditable={editable}
                 suppressContentEditableWarning
-                onFocus={() => editable && onTextFocus?.()}
+                onFocus={(e) => editable && onTextFocus?.(e)}
                 onMouseUp={() => editable && onTextSelect?.()}
                 onBlur={(e) => {
                   if (editable) {
                     onTextEdit('companyName', e.currentTarget.textContent || '');
-                    onTextBlur?.();
+                    onTextBlur?.(e);
                   }
                 }}
                 style={{
@@ -650,12 +650,12 @@ function renderComponent(
                 className="text-gray-400"
                 contentEditable={editable}
                 suppressContentEditableWarning
-                onFocus={() => editable && onTextFocus?.()}
+                onFocus={(e) => editable && onTextFocus?.(e)}
                 onMouseUp={() => editable && onTextSelect?.()}
                 onBlur={(e) => {
                   if (editable) {
                     onTextEdit('tagline', e.currentTarget.textContent || '');
-                    onTextBlur?.();
+                    onTextBlur?.(e);
                   }
                 }}
                 style={{
@@ -678,14 +678,14 @@ function renderComponent(
                       className="text-gray-400 hover:text-white transition-colors"
                       contentEditable={editable}
                       suppressContentEditableWarning
-                      onFocus={() => editable && onTextFocus?.()}
+                      onFocus={(e) => editable && onTextFocus?.(e)}
                       onMouseUp={() => editable && onTextSelect?.()}
                       onBlur={(e) => {
                         if (editable) {
                           const updatedLinks = [...props.links];
                           updatedLinks[index] = { ...updatedLinks[index], title: e.currentTarget.textContent || '' };
                           updateComponent?.(component.id, { links: updatedLinks });
-                          onTextBlur?.();
+                          onTextBlur?.(e);
                         }
                       }}
                       style={{
