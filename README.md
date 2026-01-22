@@ -2,6 +2,12 @@
 
 A modern, visual website builder with drag-and-drop editing, themes, templates, and inline content editing.
 
+## Authoritative Architecture
+
+The system architecture, planes, server layout, and operating rules live here:
+- `docs/infrastructure.md`
+- `docs/siteplan`
+
 ## Features
 
 - **10 Pre-built Templates** - SaaS, Portfolio, E-commerce, and more
@@ -19,7 +25,7 @@ A modern, visual website builder with drag-and-drop editing, themes, templates, 
 - TypeScript
 - Tailwind CSS v3
 - Zustand (State Management)
-- Supabase (PostgreSQL Database)
+- Supabase (Control + Content Planes)
 - @dnd-kit (Drag and Drop)
 - Replicate API (AI Image Generation)
 
@@ -47,10 +53,16 @@ npm install
 
 3. Create a \`.env\` file with your credentials:
 \`\`\`env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
-SUPABASE_SECRET_KEY=your_supabase_secret_key
-SUPABASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SUPABASE_CONTROL_URL=your_control_plane_url
+NEXT_PUBLIC_SUPABASE_CONTROL_PUBLISHABLE_KEY=your_control_plane_publishable_key
+SUPABASE_CONTROL_SECRET_KEY=your_control_plane_secret_key
+SUPABASE_CONTROL_PROJECT_ID=your_control_plane_project_id
+
+NEXT_PUBLIC_SUPABASE_CONTENT_URL=your_content_plane_url
+NEXT_PUBLIC_SUPABASE_CONTENT_PUBLISHABLE_KEY=your_content_plane_publishable_key
+SUPABASE_CONTENT_SECRET_KEY=your_content_plane_secret_key
+SUPABASE_CONTENT_PROJECT_ID=your_content_plane_project_id
+
 REPLICATE_API_TOKEN=your_replicate_token (optional)
 \`\`\`
 
@@ -70,7 +82,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Railway Deployment
 
-This project is configured for Railway deployment using Railway.toml (not Nixpacks).
+This repo currently hosts the User UI Server. The full multi-service plan is defined in `docs/infrastructure.md`.
 
 1. Install Railway CLI:
 \`\`\`bash
@@ -87,12 +99,16 @@ railway login
 railway link
 \`\`\`
 
-4. Set environment variables:
+4. Set environment variables (per `docs/infrastructure.md`):
 \`\`\`bash
-railway variables --set "NEXT_PUBLIC_SUPABASE_URL=your_url" \\
-  --set "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_key" \\
-  --set "SUPABASE_SECRET_KEY=your_secret" \\
-  --set "SUPABASE_PROJECT_ID=your_project_id"
+railway variables --set "NEXT_PUBLIC_SUPABASE_CONTROL_URL=your_control_url" \\
+  --set "NEXT_PUBLIC_SUPABASE_CONTROL_PUBLISHABLE_KEY=your_control_key" \\
+  --set "SUPABASE_CONTROL_SECRET_KEY=your_control_secret" \\
+  --set "SUPABASE_CONTROL_PROJECT_ID=your_control_project_id" \\
+  --set "NEXT_PUBLIC_SUPABASE_CONTENT_URL=your_content_url" \\
+  --set "NEXT_PUBLIC_SUPABASE_CONTENT_PUBLISHABLE_KEY=your_content_key" \\
+  --set "SUPABASE_CONTENT_SECRET_KEY=your_content_secret" \\
+  --set "SUPABASE_CONTENT_PROJECT_ID=your_content_project_id"
 \`\`\`
 
 5. Deploy:
